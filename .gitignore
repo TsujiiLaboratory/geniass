@@ -1,0 +1,4 @@
+*.o
+geniass
+makeMapping
+remapStandOff
