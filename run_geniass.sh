@@ -17,4 +17,5 @@ IN_FILE=`readlink -f $1`
 OUT_FILE=`readlink -f $2`
 RUBY=$3
 
+# The program uses relative paths and must be run with CWD set to its root
 cd $PROG_DIR && ./geniass $IN_FILE $OUT_FILE $RUBY
