@@ -23,31 +23,62 @@ void split(string& str, vector<string>& tokens)
     }
 }
 
+/* TODO: Repeating the usage string */
 int main(int argc, char* argv[])
 {
-	if (argc < 3 || argc > 4) {
-		cerr << "Usage: " << argv[0] << "input output [path-to-ruby]" << endl;
-		exit(1);
-	}
+    int ch, quiet;
+
+    /* Initialise arguments */
+    quiet = 0;
+
+    string progName = string(argv[0]);
+
+    /* Parse cmd-line arguments */
+    while((ch = getopt(argc, argv, "qh")) != -1) {
+        switch(ch) {
+            case 'q':
+                quiet = 1;
+                break;
+            case 'h':
+                cerr << "Usage: " << progName << " input output [path-to-ruby]" << endl;
+                exit(0);
+            case '?':
+            default:
+                cerr << "Usage: " << progName << " input output [path-to-ruby]" << endl;
+                exit(-1);
+        }
+    }
+    argc -= optind;
+    argv += optind;
+
+    if (argc < 2 || argc > 3) {
+        cerr << "Usage: " << progName << " input output [path-to-ruby]" << endl;
+        exit(-1);
+    }
 
     ME_Model model;
 
-    string inFile = argv[1];
-    string outFile = argv[2];
-    //string modelFile = argv[3];
+    string inFile = argv[0];
+    string outFile = argv[1];
+    //string modelFile = argv[2];
     string modelFile = "model1-1.0";
-	string rubyCommand = (argc == 4) ? argv[3] : "ruby";
+	string rubyCommand = (argc == 3) ? argv[2] : "ruby";
 
+    /* XXX: Should use temporary files if any! */
 	string eventFile = inFile + ".event";
 	string resultFile = inFile + ".result";
 
-    cerr << "Extracting events.";
+    if (!quiet) {
+        cerr << "Extracting events.";
+    }
 
 	string extractionCommand = 
     	rubyCommand + " EventExtracter.rb " + inFile + " " + eventFile;
     system(extractionCommand.c_str());
 
-    cerr << "roading model file." << endl;
+    if (!quiet) {
+        cerr << "roading model file." << endl;
+    }
     model.load_from_file(modelFile.c_str());
     //model.load_from_file("model" + setID + "-" + ineq);
     //ifstream fileIn(string("/home/users/y-matsu/private/workspace/eclipse-workspace/GENIASS/" + setID + "/test.txt").c_str());
@@ -59,7 +90,9 @@ int main(int argc, char* argv[])
     string line, markedTxt;
 
     getline(fileIn, markedTxt);
-    cerr << "start classification." << endl;
+    if (!quiet) {
+        cerr << "start classification." << endl;
+    }
     while (getline(fileIn, line)){
         vector<string> tokens;
         split(line, tokens);
