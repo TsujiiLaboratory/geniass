@@ -24,6 +24,7 @@ void split(string& str, vector<string>& tokens)
 }
 
 /* TODO: Repeating the usage string */
+/* TODO: Incorporate the post-processing from BioNLP 2011? */
 int main(int argc, char* argv[])
 {
     int ch, quiet;
